@@ -1,63 +1,71 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.*;
+import java.util.List;
 
-class rendering {
-    static class Vertex {
-        double x;
-        double y;
-        double z;
 
-        Vertex(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-    static class Triangle {
-        Vertex v1;
-        Vertex v2;
-        Vertex v3;
-
-        Color color;
-
-        Triang(Vertex v1, Vertex v2, Vertex v3, Color color) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.v3 = v3;
-            this.color = color;
-        }
-    }
+public class rendering {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         Container pane = frame.getContentPane();
         pane.setLayout(new BorderLayout());
 
+        // slider to control horizontal rotation
+        JSlider headingSlider = new JSlider(0, 360, 180);
+        pane.add(headingSlider, BorderLayout.SOUTH);
+
+        // slider to control vertical rotation
+        JSlider pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
+        pane.add(pitchSlider, BorderLayout.EAST);
+
+        List tris = new ArrayList<Triangle>();
+        tris.add(new Triangle(new Vertex(100, 100, 100),
+                new Vertex(-100, -100, 100),
+                new Vertex(-100, 100, -100),
+                Color.WHITE));
+        tris.add(new Triangle(new Vertex(100, 100, 100),
+                new Vertex(-100, -100, 100),
+                new Vertex(100, -100, -100),
+                Color.RED));
+        tris.add(new Triangle(new Vertex(-100, 100, -100),
+                new Vertex(100, -100, -100),
+                new Vertex(100, 100, 100),
+                Color.GREEN));
+        tris.add(new Triangle(new Vertex(-100, 100, -100),
+                new Vertex(100, -100, -100),
+                new Vertex(-100, -100, 100),
+                Color.BLUE));
+
+        // panel to display render results
         JPanel renderPanel = new JPanel() {
             public void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setColor(Color.BLACK);
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
-                Vertex v1 = new Vertex(100, 100, 100);
-                Vertex v2 = new Vertex(-100, -100, 100);
-                Vertex v3 = new Vertex(-100, 100, -100);
-                Vertex v4 = new Vertex(100, -100, -100);
+                g2.translate(getWidth()/2, getHeight()/2);
+                g2.setColor(Color.WHITE);
 
-                List tris = new List();
-                tris.add(new Triang(v1, v2, v3, Color.WHITE));
-                tris.add(new Triang(v1, v4, v2, Color.RED));
-                tris.add(new Triang(v3, v4, v1, Color.GREEN));
-                tris.add(new Triang(v2, v4, v3, Color.BLUE));
+                for (int i = 0; i < tris.size(); i++) {
+                    Triangle t = (Triangle) tris.get(i);
+                    Path2D path = new Path2D.Double();
+                    path.moveTo(t.v1.x, t.v1.y);
+                    path.lineTo(t.v2.x, t.v2.y);
+                    path.lineTo(t.v3.x, t.v3.y);
+                    path.closePath();
+                    g2.setColor(t.color);
+                    g2.draw(path);
+                }
 
+                // rendering magic will happen here
             }
-
         };
         pane.add(renderPanel, BorderLayout.CENTER);
 
-        frame.setSize(600, 600);
+        frame.setSize(400, 400);
         frame.setVisible(true);
 
     }
-
 }
