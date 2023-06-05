@@ -38,6 +38,7 @@ public class rendering {
                 new Vertex(-100, -100, 100),
                 Color.BLUE));
 
+
         // panel to display render results
         JPanel renderPanel = new JPanel() {
             public void paintComponent(Graphics g) {
@@ -59,6 +60,8 @@ public class rendering {
                     g2.draw(path);
                 }
 
+
+
                 // rendering magic will happen here
             }
         };
@@ -66,6 +69,8 @@ public class rendering {
 
         frame.setSize(400, 400);
         frame.setVisible(true);
+
+
 
     }
 }
